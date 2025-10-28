@@ -7,6 +7,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossorigin=""/>
     <title>GeoTagApp</title>
     <link rel="stylesheet" href="./stylesheets/style.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -35,10 +37,10 @@
                     <input type="text" maxlength="10" required="true" placeholder="Name the tag" id="tag-input-name"></input>
                     <br>
                     <label for="tag-input-lat">Latitude and Longitude</label>
-                    <input type="text" readonly="true" required="true" placeholder="Latitude" id="tag-input-latlong"></input>
+                    <input type="text" readonly="true" required="true" placeholder="Latitude" id="tag-input-lat"></input>
                     <br>
                     <label for="tag-input-long">Latitude and Longitude</label>
-                    <input type="text" readonly="true" required="true" placeholder="Longitude" id="tag-input-latlong"></input>
+                    <input type="text" readonly="true" required="true" placeholder="Longitude" id="tag-input-long"></input>
                     <br>
                     <label for="tag-input-#">Hashtag</label>
                     <input type="text" maxlength="11" required="false" placeholder="#xxxx" pattern="^#[A-Za-z]{1,10}$" id="tag-input-#"></input>
@@ -91,5 +93,13 @@
         <span>(c) 2021/22 HKA_IWI_VSYS</span>
     </footer>
 </body>
+
+<!-- Load JavaScripts
+    ================================================== -->
+	<!-- Placed at the end of the document so the pages load faster -->
+      <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin=""></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+	<script src="./javascripts/geotagging.js"></script>
 
 </html>
