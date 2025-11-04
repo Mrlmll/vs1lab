@@ -270,4 +270,7 @@ footer span{
     margin: 0;
     margin-bottom: 2rem;
   }
+  .discovery__wrapper{
+    flex-direction: column;
+  }
 }

@@ -120,6 +120,7 @@ class MapManager {
 const inputLatitude = document.getElementById("inputLatitude");
 const inputLongitude = document.getElementById("inputLongitude");
 const mapView = document.getElementById("mapView");
+const spanEle = document.getElementById("span-ele");
 
 function updateLocation() {
     LocationHelper.findLocation((location) => {
@@ -130,7 +131,8 @@ function updateLocation() {
         const mapManager = new MapManager();
         mapManager.initMap(location.latitude, location.longitude);
         mapManager.updateMarkers(location.latitude, location.longitude);
-        mapView.remove()
+        mapView.remove();
+        spanEle.remove();
 }, (error) => {
         alert(error.message)
     });
