@@ -30,6 +30,16 @@ class InMemoryGeoTagStore {
 
   constructor() {
     this.#geoTags = [];
+
+    GeoTagExamples.tagList.forEach((tagArray) => {
+      const geoTag = new GeoTag(
+        tagArray[1],
+        tagArray[2],
+        tagArray[0],
+        tagArray[3]
+      );
+      this.addGeoTag(geoTag);
+    });
   }
 
   addGeoTag(geoTag) {

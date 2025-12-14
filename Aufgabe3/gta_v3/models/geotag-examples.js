@@ -11,6 +11,8 @@
  * TODO: populate your InMemoryGeoTagStore with these tags
  * 
  */
+
+
 class GeoTagExamples {
     /**
      * Provides some geoTag data
