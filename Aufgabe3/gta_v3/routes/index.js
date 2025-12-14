@@ -61,6 +61,17 @@ router.get('/', (req, res) => {
  */
 
 // TODO: ... your code here ...
+router.post('/tagging', (req, res) => {
+ 
+  // TODO: wie sieht die req aus um alles zu einem geoTag zu Parsen
+
+  
+  geoTagStore.addGeoTag(newTag);
+
+  const nearbyTags = geoTagStore.getNearbyGeoTags(newTag, 0.5);
+
+  res.render('index', { taglist: nearbyTags });
+});
 
 /**
  * Route '/discovery' for HTTP 'POST' requests.
@@ -78,6 +89,16 @@ router.get('/', (req, res) => {
  * by radius and keyword.
  */
 
-// TODO: ... your code here ...
+router.post('/tagging', (req, res) => {
+ 
+  // TODO: wie sieht die req aus um alles zu einem geoTag zu Parsen brauche auch keyword
+
+  
+  geoTagStore.addGeoTag(newTag);
+
+  const nearbyTags = geoTagStore.searchNearbyGeoTags(keyword, newTag, 0.5);
+
+  res.render('index', { taglist: nearbyTags });
+});
 
 module.exports = router;
