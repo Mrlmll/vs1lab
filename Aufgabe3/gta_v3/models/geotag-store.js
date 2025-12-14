@@ -23,10 +23,58 @@
  * - The proximity constrained is the same as for 'getNearbyGeoTags'.
  * - Keyword matching should include partial matches from name or hashtag fields. 
  */
-class InMemoryGeoTagStore{
 
-    // TODO: ... your code here ...
 
+class InMemoryGeoTagStore {
+  #geoTags;
+
+  constructor() {
+    this.#geoTags = [];
+  }
+
+  addGeoTag(geoTag) {
+    this.#geoTags.push(geoTag);
+  }
+
+  removeGeoTag(name) {
+    this.#geoTags = this.#geoTags.filter(
+      (geoTagElem) => geoTagElem.name !== name
+    );
+  }
+
+  getNearbyGeoTags(geoTag, distance) {
+    const nearbyTags = [];
+    this.#geoTags.forEach((geoTagElem) => {
+      const distBetween = calculateDistInKM(geoTagElem, geoTag);
+      if (distBetween <= distance) {
+        nearbyTags.push(geoTagElem);
+      }
+    });
+    return nearbyTags;
+  }
+
+  searchNearbyGeoTags(keyword, referenceGeoTag, distance) {
+    return this.#geoTags.filter(
+      (tag) =>
+        (tag.name.includes(keyword) || tag.hashtag.includes(keyword)) &&
+        calculateDistInKM(tag, referenceGeoTag) <= distance
+    );
+  }
+}
+
+function calculateDistInKM(geoTag1, geoTag2){
+    const lat1 = geoTag1.latitude;
+    const long1 = geoTag1.longitude;
+    const lat2 = geoTag2.latitude;
+    const long2 = geoTag2.longitude;
+
+    const distLat = lat2 - lat1;
+    const distLong = long2 - long1;
+
+    const dist = Math.sqrt(distLat * distLat + distLong * distLong);
+
+    const distKM = dist * 111;
+    return distKM;
 }
 
 module.exports = InMemoryGeoTagStore

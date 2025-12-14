@@ -8,11 +8,20 @@
 /** * 
  * A class representing geotags.
  * GeoTag objects should contain at least all fields of the tagging form.
+ * 
+Latitude:
+Longitude
+Name:
+Hashtag:
  */
-class GeoTag {
 
-    // TODO: ... your code here ...
-    
+class GeoTag {
+    constructor(latitude, longitude, name, hashtag) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.name = name;
+        this.hashtag = hashtag
+    }
 }
 
 module.exports = GeoTag;
