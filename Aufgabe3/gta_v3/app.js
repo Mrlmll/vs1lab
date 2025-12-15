@@ -20,9 +20,7 @@ const logger = require('morgan');
 const indexRouter = require('./routes/index');
 
 
-const geoTagStore = new InMemoryGeoTagStore();
-new GeoTagExamples(geoTagStore);
-app.locals.geoTagStore = geoTagStore;
+
 
 /**
  * Set up Express app.
@@ -69,5 +67,9 @@ app.use(function(err, req, res) {
     res.status(err.status || 500);
     res.render('error');
   });
+
+  const geoTagStore = new InMemoryGeoTagStore();
+  new GeoTagExamples(geoTagStore);
+  app.locals.geoTagStore = geoTagStore;
 
  module.exports = app;
