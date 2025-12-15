@@ -31,7 +31,7 @@ const mapView = document.getElementById("mapView");
 const spanEle = document.getElementById("span-ele");
 
 function updateLocation() {
-    if(inputLatitude.value == null || inputLongitude.value == null){
+    
         LocationHelper.findLocation((location) => {
             console.log(`Your location: Latitude ${location.latitude}, Longitude ${location.longitude}`);
             inputLatitude.value = location.latitude;
@@ -45,10 +45,12 @@ function updateLocation() {
         }, (error) => {
             alert(error.message)
         });
-}
+    
 }
 
 // Wait for the page to fully load its DOM content, then call updateLocation
 document.addEventListener("DOMContentLoaded", () => {
-    updateLocation();
+    if(inputLatitude.value == null || inputLongitude.value == null){
+        updateLocation();
+    }
 });
