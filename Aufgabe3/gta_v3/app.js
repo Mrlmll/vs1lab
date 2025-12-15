@@ -9,6 +9,8 @@
 /**
  * Define module dependencies.
  */
+const InMemoryGeoTagStore = require('./models/geotag-store');
+const GeoTagExamples = require('./models/geotag-examples');
 
 const createError = require('http-errors');
 const express = require('express');
@@ -16,6 +18,11 @@ const path = require('path');
 const logger = require('morgan');
 
 const indexRouter = require('./routes/index');
+
+
+const geoTagStore = new InMemoryGeoTagStore();
+new GeoTagExamples(geoTagStore);
+app.locals.geoTagStore = geoTagStore;
 
 /**
  * Set up Express app.

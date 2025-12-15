@@ -40,11 +40,11 @@
                     <div>
                         <label for="input-latitude">Latitude:</label>
                         <input type="text" id="inputLatitude" name="input-latitude" class="unselected-input"
-                            value="49.01379" readonly>
+                            value="<%= set_latitude %>" readonly>
                     </div>
                     <div>
                         <label for="input-longitude">Longitude</label>
-                        <input id="inputLongitude" name="input-longitude" class="unselected-input" value="8.404435"
+                        <input id="inputLongitude" name="input-longitude" class="unselected-input" value="<%= set_longitude %>"
                             readonly>
                     </div>
                     <div>
@@ -84,6 +84,8 @@
                         <input type="text" id="inputSearch" name="input-search" class="selected-input"
                             placeholder="e.g. Berlin">
                     </div>
+                    <input type="hidden" id="discoveryLatitude" name="latitude" value="<%= set_latitude %>">
+                    <input type="hidden" id="discoveryLongitude" name="longitude" value="<%= set_longitude %>">
                     <div>
                         <button class="search-button">Search</button>
                     </div>
@@ -96,14 +98,23 @@
                 <div class="discovery__taglist">
                     <ul class="discovery__results" id="discoveryResults">
                         <% if (taglist !==undefined) taglist.forEach(function(gtag) { %>
-                            <li>
-                                <%= gtag.name %> ( <%= gtag.latitude %>,<%= gtag.longitude %>) <%= gtag.hashtag %>
-                            </li>
+                            <div class="fieldset-2">
+                                <h3 class="tag-name">
+                                    <%= gtag.name %>
+                                </h3>
+                                <p class="tag-location">Latitude: <%= gtag.latitude %>, Longitude: <%= gtag.longitude %>
+                                </p>
+                                <% if (gtag.hashtag) { %>
+                                    <p class="tag-hashtag">
+                                        <%= gtag.hashtag %>
+                                    </p>
+                                    <% } %>
+                            </div>
                             <% }); %>
                     </ul>
                 </div>
 
-                <div id="map" class="discovery__map">
+                <div id="map" class="discovery__map" data-tags="<%- tagsJSON %>">
                     <img src="./images/mapview.jpg" alt="a map with locations" id="mapView" />
                     <span id="span-ele">Result map</span>
                 </div>
@@ -117,6 +128,8 @@
     </footer>
 
     <script src="./javascripts/geotagging.js"></script>
+    <script src="./javascripts/location-helper.js"></script>
+    <script src="./javascripts/map-manager.js"></script>
 </body>
 
 </html>

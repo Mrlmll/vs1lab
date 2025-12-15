@@ -29,7 +29,7 @@ const GeoTag = require('../models/geotag');
  * TODO: implement the module in the file "../models/geotag-store.js"
  */
 // eslint-disable-next-line no-unused-vars
-const GeoTagStore = require('../models/geotag-store');
+
 
 /**
  * Route '/' for HTTP 'GET' requests.
@@ -42,7 +42,13 @@ const GeoTagStore = require('../models/geotag-store');
 
 // TODO: extend the following route example if necessary
 router.get('/', (req, res) => {
-  res.render('index', { taglist: [] })
+  const geoTagStore = req.app.locals.geoTagStore;
+  res.render('index', {
+      taglist: geoTagStore.getGeoTags(),
+      set_latitude: "",
+      set_longitude: "",
+      tagsJSON: geoTagStore.getGeoTagsAsJSON()
+  })
 });
 
 /**
@@ -62,15 +68,24 @@ router.get('/', (req, res) => {
 
 // TODO: ... your code here ...
 router.post('/tagging', (req, res) => {
- 
-  // TODO: wie sieht die req aus um alles zu einem geoTag zu Parsen
+  const geoTagStore = req.app.locals.geoTagStore;
 
-  
-  geoTagStore.addGeoTag(newTag);
+  const {
+    'input-name': name,
+    'input-latitude': latitude,
+    'input-longitude': longitude,
+    'input-hashtag': hashtag
+  } = req.body;
 
-  const nearbyTags = geoTagStore.getNearbyGeoTags(newTag, 0.5);
+  const newGeoTag = new GeoTag(
+    name,
+    parseFloat(latitude),
+    parseFloat(longitude),
+    hashtag
+  );
 
-  res.render('index', { taglist: nearbyTags });
+  geoTagStore.addGeoTag(newGeoTag);
+  res.redirect('/');
 });
 
 /**
@@ -89,16 +104,35 @@ router.post('/tagging', (req, res) => {
  * by radius and keyword.
  */
 
-router.post('/tagging', (req, res) => {
- 
-  // TODO: wie sieht die req aus um alles zu einem geoTag zu Parsen brauche auch keyword
+router.post('/discovery', (req, res) => {
+  const geoTagStore = req.app.locals.geoTagStore;
 
-  
-  geoTagStore.addGeoTag(newTag);
+  // Form-Felder extrahieren
+  const {
+    latitude,
+    longitude,
+    'input-search': keyword
+  } = req.body;
 
-  const nearbyTags = geoTagStore.searchNearbyGeoTags(keyword, newTag, 0.5);
+  const lat = parseFloat(latitude);
+  const lon = parseFloat(longitude);
+  const radius = 100; // km
 
-  res.render('index', { taglist: nearbyTags });
+  // Suche: entweder keyword vorhanden oder nicht
+  let results = [];
+  if (keyword && keyword.trim() !== '') {
+    results = geoTagStore.searchNearbyGeoTags(lat, lon, keyword.trim(), radius);
+  } else {
+    results = geoTagStore.getNearbyGeoTags(lat, lon, radius);
+  }
+
+  // Rendern mit allen benötigten Parametern
+  res.render('index', {
+    taglist: results,
+    set_latitude: lat,
+    set_longitude: lon,
+    tagsJSON: JSON.stringify(results)
+  });
 });
 
 module.exports = router;

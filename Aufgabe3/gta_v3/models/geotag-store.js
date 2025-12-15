@@ -26,21 +26,7 @@
 
 
 class InMemoryGeoTagStore {
-  #geoTags;
-
-  constructor() {
-    this.#geoTags = [];
-
-    GeoTagExamples.tagList.forEach((tagArray) => {
-      const geoTag = new GeoTag(
-        tagArray[1],
-        tagArray[2],
-        tagArray[0],
-        tagArray[3]
-      );
-      this.addGeoTag(geoTag);
-    });
-  }
+  #geoTags = [];
 
   addGeoTag(geoTag) {
     this.#geoTags.push(geoTag);
@@ -52,10 +38,19 @@ class InMemoryGeoTagStore {
     );
   }
 
-  getNearbyGeoTags(geoTag, distance) {
+  getGeoTags() {
+    return this.#geoTags;
+  }
+        
+  getGeoTagsAsJSON() {
+    return JSON.stringify(this.#geoTags);
+  }
+
+
+  getNearbyGeoTags(latitude, longitude, distance) {
     const nearbyTags = [];
     this.#geoTags.forEach((geoTagElem) => {
-      const distBetween = calculateDistInKM(geoTagElem, geoTag);
+      const distBetween = calculateDistInKM(geoTagElem.latitude, geoTagElem.longitude, latitude, longitude);
       if (distBetween <= distance) {
         nearbyTags.push(geoTagElem);
       }
@@ -63,21 +58,16 @@ class InMemoryGeoTagStore {
     return nearbyTags;
   }
 
-  searchNearbyGeoTags(keyword, referenceGeoTag, distance) {
+  searchNearbyGeoTags(latitude, longitude, keyword, distance) {
     return this.#geoTags.filter(
       (tag) =>
         (tag.name.includes(keyword) || tag.hashtag.includes(keyword)) &&
-        calculateDistInKM(tag, referenceGeoTag) <= distance
+        calculateDistInKM(tag.latitude, tag.longitude, latitude, longitude) <= distance
     );
   }
 }
 
-function calculateDistInKM(geoTag1, geoTag2){
-    const lat1 = geoTag1.latitude;
-    const long1 = geoTag1.longitude;
-    const lat2 = geoTag2.latitude;
-    const long2 = geoTag2.longitude;
-
+function calculateDistInKM(lat1, long1, lat2, long2){
     const distLat = lat2 - lat1;
     const distLong = long2 - long1;
 
