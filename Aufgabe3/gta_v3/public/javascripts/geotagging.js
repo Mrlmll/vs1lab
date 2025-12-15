@@ -9,15 +9,6 @@
 // Try to find this output in the browser...
 console.log("The geoTagging script is going to start...");
 
-/**
-  * A class to help using the HTML5 Geolocation API.
-  */
-
-
-/**
- * A class to help using the Leaflet map service.
- */
-
 
 /**
  * TODO: 'updateLocation'
