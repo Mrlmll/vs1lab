@@ -50,32 +50,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function updateLocation() {
     try {
-        //Überprüfen, ob die Felder für Latitude und Longitude bereits ausgefüllt sind
         const fieldLat = document.getElementById("inputLatitude");
         const fieldLon = document.getElementById("inputLongitude");
-
         const fieldDisLat = document.getElementById("discoveryLatitude");
         const fieldDisLon = document.getElementById("discoveryLongitude");
 
-        // Wenn die Felder bereits Werte haben: keine Geolokalisierung
         if (fieldLat && fieldLat.value && fieldLon && fieldLon.value) {
             const latitude = parseFloat(fieldLat.value);
             const longitude = parseFloat(fieldLon.value);
             updateMap(latitude, longitude);
         } else {
-            //Geolokalisierung
             LocationHelper.findLocation((locationHelper) => {
                 const latitude = locationHelper.latitude;
                 const longitude = locationHelper.longitude;
 
-                // Aktualisieren der Formulare
+            
                 if (fieldLat) fieldLat.value = latitude;
                 if (fieldLon) fieldLon.value = longitude;
 
                 if (fieldDisLat) fieldDisLat.value = latitude;
                 if (fieldDisLon) fieldDisLon.value = longitude;
 
-                // Karte mit den neuen Koordinaten initialisieren und Marker hinzufügen
                 updateMap(latitude, longitude);
             });
         }
@@ -96,7 +91,6 @@ function updateMap(latitude, longitude) {
     const rawTags = map.getAttribute("data-tags");
 
     if (!rawTags) {
-        console.warn("No data-tags attribute found");
         return;
     }
 
