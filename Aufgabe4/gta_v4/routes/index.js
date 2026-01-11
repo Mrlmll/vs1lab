@@ -39,7 +39,44 @@ const GeoTagStore = require('../models/geotag-store');
  */
 
 router.get('/', (req, res) => {
-  res.render('index', { taglist: [] })
+    const geoTagStore = req.app.locals.geoTagStore;
+    res.render('index', {
+        taglist: geoTagStore.getGeoTags(),
+        set_latitude: "",
+        set_longitude: "",
+        tagsJSON: geoTagStore.getGeoTagsAsJSON()
+    })
+});
+
+router.post('/discovery', (req, res) => {
+  const geoTagStore = req.app.locals.geoTagStore;
+
+  // Form-Felder extrahieren
+  const {
+    latitude,
+    longitude,
+    'input-search': keyword
+  } = req.body;
+
+  const lat = parseFloat(latitude);
+  const lon = parseFloat(longitude);
+  const radius = 100; // km
+
+  // Suche: entweder keyword vorhanden oder nicht
+  let results = [];
+  if (keyword && keyword.trim() !== '') {
+    results = geoTagStore.searchNearbyGeoTags(lat, lon, keyword.trim(), radius);
+  } else {
+    results = geoTagStore.getNearbyGeoTags(lat, lon, radius);
+  }
+
+  // Rendern mit allen benötigten Parametern
+  res.render('index', {
+    taglist: results,
+    set_latitude: lat,
+    set_longitude: lon,
+    tagsJSON: JSON.stringify(results)
+  });
 });
 
 // API routes (A4)
@@ -57,7 +94,32 @@ router.get('/', (req, res) => {
  */
 
 // TODO: ... your code here ...
+router.get('/api/geotags', (req, res) => {
+    const geoTagStore = req.app.locals.geoTagStore;
+    console.log(req.query);
 
+    const latitude = req.query.latitude;
+    const longitude = req.query.longitude;
+    const keyword = req.query.searchTerm;
+    
+    const lat = parseFloat(latitude);
+    const lon = parseFloat(longitude);
+    const radius = 100; // km
+    
+    // Suche: entweder keyword vorhanden oder nicht
+    let results = [];
+    if (!latitude && !longitude && !keyword) {
+        results = geoTagStore.getGeoTags();
+    } else {
+        if (keyword && keyword.trim() !== '') {
+            results = geoTagStore.searchNearbyGeoTags(lat, lon, keyword.trim(), radius);
+        } else {
+            results = geoTagStore.getNearbyGeoTags(lat, lon, radius);
+        }
+    }
+
+    res.json(results)
+})
 
 /**
  * Route '/api/geotags' for HTTP 'POST' requests.
@@ -71,6 +133,30 @@ router.get('/', (req, res) => {
  */
 
 // TODO: ... your code here ...
+router.post('/api/geotags', (req, res) => {
+    const geoTagStore = req.app.locals.geoTagStore;
+    console.log(req.body);
+    
+
+    const name = req.body.name;
+    const latitude = req.body.latitude;
+    const longitude = req.body.longitude;
+    const hashtag = req.body.hashtag;
+
+    const newGeoTag = new GeoTag(
+        name,
+        parseFloat(latitude),
+        parseFloat(longitude),
+        hashtag
+    );
+
+    geoTagStore.addGeoTag(newGeoTag);
+    
+    const id = geoTagStore.getGeoTags().length - 1;
+
+
+    res.json(geoTagStore.getGeoTagById(id))
+})
 
 
 /**
@@ -84,6 +170,16 @@ router.get('/', (req, res) => {
  */
 
 // TODO: ... your code here ...
+router.get('/api/geotags/:id', (req, res) => {
+    const geoTagStore = req.app.locals.geoTagStore;
+    const geoTag = geoTagStore.getGeoTagById(Number(req.params.id));
+
+    if (!geoTag) {
+        return res.status(404).send("GeoTag not found.");
+    }
+
+    res.json(geoTag);
+});
 
 
 /**
@@ -101,7 +197,27 @@ router.get('/', (req, res) => {
  */
 
 // TODO: ... your code here ...
+router.put('/api/geotags/:id', (req, res) => {
+    const geoTagStore = req.app.locals.geoTagStore;
+    const { name, latitude, longitude, hashtag } = req.body;
+    const geoTagId = Number(req.params.id);
 
+    console.log(req.body);
+    const geoTag = geoTagStore.getGeoTagById(geoTagId);
+
+    if (!geoTag) {
+        return res.status(404).send("GeoTag not found.");
+    }
+
+    geoTag.name = name;
+    geoTag.latitude = latitude;
+    geoTag.longitude = longitude;
+    geoTag.hashtag = hashtag;
+
+    geoTagStore.updateGeoTag(geoTag)
+
+    res.json(geoTag);
+});
 
 /**
  * Route '/api/geotags/:id' for HTTP 'DELETE' requests.
@@ -115,5 +231,16 @@ router.get('/', (req, res) => {
  */
 
 // TODO: ... your code here ...
+router.delete('/api/geotags/:id', (req, res) => {
+    const geoTagStore = req.app.locals.geoTagStore;
+    const geoTag = geoTagStore.getGeoTagById(Number(req.params.id));
+
+    if (!geoTag) {
+        return res.status(404).send("GeoTag not found.");
+    }
+
+    geoTagStore.removeGeoTagById(geoTag.id);
+    res.status(204).send();
+});
 
 module.exports = router;
